@@ -1,16 +1,18 @@
 package com.distribuida.db;
 
 
+import jakarta.json.bind.annotation.JsonbDateFormat;
 import jakarta.persistence.*;
 
-import java.util.Date;
+import java.sql.Date;
+
 
 @Entity
 @Table(name = "albums")
 public class Album {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "singer_id")
@@ -20,6 +22,7 @@ public class Album {
     private String title;
 
     @Column(name = "release_date")
+    @JsonbDateFormat(value = "dd-MM-yyyy", locale = "en_US")
     private Date releaseDate;
 
     @Column(name = "version")

@@ -5,8 +5,9 @@ import com.distribuida.db.Album;
 import com.distribuida.dto.AlbumDto;
 import com.distribuida.dto.SingerDto;
 import com.distribuida.repo.AlbumRepo;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
+
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Transactional
-@Singleton
+@ApplicationScoped
 public class AlbumRest {
 
     @Inject

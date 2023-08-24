@@ -1,5 +1,6 @@
 package com.distribuida.repo;
 
+
 import com.distribuida.db.Album;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
@@ -10,7 +11,7 @@ import java.util.List;
 @ApplicationScoped
 public class AlbumRepo {
 
-    @PersistenceContext(unitName = "restapi_PU")
+    @PersistenceContext(unitName = "servicio2")
     private EntityManager em;
 
     public List<Album> findAll() {
