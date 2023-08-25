@@ -12,6 +12,8 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.faulttolerance.Retry;
+import org.eclipse.microprofile.faulttolerance.Timeout;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import java.util.List;
@@ -33,6 +35,8 @@ public class AlbumRest {
 
 
     @GET
+    @Timeout(4000)
+    @Retry(maxRetries = 4)
     public List<AlbumDto> findAll(){
         return rep.findAll()
                 .stream()
@@ -50,12 +54,9 @@ public class AlbumRest {
                 }).collect(Collectors.toList());
     }
 
-//    @GET
-//    public List<Album> findAll(){
-//        return rep.findAll().list();
-//    }
-
     @GET
+    @Timeout(4000)
+    @Retry(maxRetries = 4)
     @Path("/{id}")
     public Response getById(@PathParam("id") Integer id) {
         var obj = rep.findById(id);
@@ -67,12 +68,16 @@ public class AlbumRest {
     }
 
     @POST
+    @Timeout(4000)
+    @Retry(maxRetries = 4)
     public Response create(Album p) {
         rep.create(p);
         return Response.status(Response.Status.CREATED.getStatusCode(), "album created").build();
     }
 
     @PUT
+    @Timeout(4000)
+    @Retry(maxRetries = 4)
     @Path("/{id}")
     public Response update(@PathParam("id") Integer id, Album tmpObj) {
         Album obj = rep.findById(id);
@@ -84,6 +89,8 @@ public class AlbumRest {
     }
 
     @DELETE
+    @Timeout(4000)
+    @Retry(maxRetries = 4)
     @Path("/{id}")
     public Response delete(@PathParam("id") Integer id) {
         rep.delete(id);
