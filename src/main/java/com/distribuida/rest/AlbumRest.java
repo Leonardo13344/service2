@@ -33,6 +33,19 @@ public class AlbumRest {
     @RestClient
     SingerRestClient clientSingers;
 
+    private AlbumDto albumToDto(Album obj){
+        AlbumDto dto = new AlbumDto();
+        dto.setId(obj.getId());
+        dto.setReleaseDate(obj.getReleaseDate());
+        dto.setTitle(obj.getTitle());
+        dto.setVersion(obj.getVersion());
+        dto.setSingerId(obj.getSingerId());
+        SingerDto tmp = clientSingers.getById(dto.getSingerId());
+        String aname = String.format("%s, %s", tmp.getFirstName(), tmp.getLastName());
+        dto.setSingerFullName(aname);
+        return dto;
+    }
+
 
     @GET
     @Timeout(4000)
@@ -40,18 +53,7 @@ public class AlbumRest {
     public List<AlbumDto> findAll(){
         return rep.findAll()
                 .stream()
-                .map(obj ->{
-                    AlbumDto dto = new AlbumDto();
-                    dto.setId(obj.getId());
-                    dto.setReleaseDate(obj.getReleaseDate());
-                    dto.setTitle(obj.getTitle());
-                    dto.setVersion(obj.getVersion());
-                    dto.setSingerId(obj.getSingerId());
-                    SingerDto tmp = clientSingers.getById(dto.getSingerId());
-                    String aname = String.format("%s, %s", tmp.getFirstName(), tmp.getLastName());
-                    dto.setSingerFullName(aname);
-                    return dto;
-                }).collect(Collectors.toList());
+                .map(this::albumToDto).collect(Collectors.toList());
     }
 
     @GET
@@ -63,8 +65,7 @@ public class AlbumRest {
         if (obj == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-
-        return Response.ok(obj).build();
+        return Response.ok(albumToDto(obj)).build();
     }
 
     @POST
