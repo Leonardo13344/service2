@@ -41,7 +41,7 @@ public class AlbumRest {
         dto.setVersion(obj.getVersion());
         dto.setSingerId(obj.getSingerId());
         SingerDto tmp = clientSingers.getById(dto.getSingerId());
-        String aname = String.format("%s, %s", tmp.getFirstName(), tmp.getLastName());
+        String aname = String.format("%s %s", tmp.getFirstName(), tmp.getLastName());
         dto.setSingerFullName(aname);
         return dto;
     }
@@ -63,7 +63,7 @@ public class AlbumRest {
     public Response getById(@PathParam("id") Integer id) {
         var obj = rep.findById(id);
         if (obj == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return Response.status(Response.Status.NOT_FOUND).entity("Album no encontrado").build();
         }
         return Response.ok(albumToDto(obj)).build();
     }
@@ -71,22 +71,30 @@ public class AlbumRest {
     @POST
     @Timeout(4000)
     @Retry(maxRetries = 4)
-    public Response create(Album p) {
-        rep.create(p);
-        return Response.status(Response.Status.CREATED.getStatusCode(), "album created").build();
+    public Response create(Album album) {
+        if(clientSingers.getById(album.getSingerId())==null){
+            return Response.status(Response.Status.NOT_FOUND).entity("Cantante no encontrado").build();
+        }
+        rep.create(album);
+        return Response.status(Response.Status.CREATED)
+                .entity("Album creado exitosamente")
+                .build();
     }
 
     @PUT
     @Timeout(4000)
     @Retry(maxRetries = 4)
     @Path("/{id}")
-    public Response update(@PathParam("id") Integer id, Album tmpObj) {
-        Album obj = rep.findById(id);
-        obj.setReleaseDate(tmpObj.getReleaseDate());
-        obj.setVersion(tmpObj.getVersion());
-        obj.setTitle(tmpObj.getTitle());
-        obj.setSingerId(tmpObj.getSingerId());
-        return Response.ok().build();
+    public Response update(@PathParam("id") Integer id, Album tmpAlbum) {
+        if(clientSingers.getById(tmpAlbum.getSingerId())==null){
+            return Response.status(Response.Status.NOT_FOUND).entity("Cantante no encontrado").build();
+        }
+        Album album = rep.findById(id);
+        album.setReleaseDate(tmpAlbum.getReleaseDate());
+        album.setVersion(tmpAlbum.getVersion());
+        album.setTitle(tmpAlbum.getTitle());
+        album.setSingerId(tmpAlbum.getSingerId());
+        return Response.ok().entity("Album actualizado exitosamente").build();
     }
 
     @DELETE
@@ -95,7 +103,7 @@ public class AlbumRest {
     @Path("/{id}")
     public Response delete(@PathParam("id") Integer id) {
         rep.delete(id);
-        return Response.ok( )
+        return Response.ok( ).entity("Album eliminado exitosamente")
                 .build();
     }
 }

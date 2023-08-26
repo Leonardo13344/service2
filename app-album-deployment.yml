@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-album
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-album
+  template:
+    metadata:
+      labels:
+        app: app-album
+    spec:
+      containers:
+        - name: app-album
+          image: milekaterine/app-album:latest
+          env:
+            - name: POSTGRES_HOST
+              value: postgres-service
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: admin
+            - name: POSTGRES_DB
+              value: distribuida
+            - name: APP_SINGER_URL
+              value: http://app-singer-service:8082
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-album-service
+spec:
+  type: ClusterIP
+  selector:
+    app: app-album
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080

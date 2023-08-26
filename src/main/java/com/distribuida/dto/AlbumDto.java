@@ -1,5 +1,6 @@
 package com.distribuida.dto;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public class AlbumDto {
@@ -7,7 +8,7 @@ public class AlbumDto {
     private Integer id;
     private Integer singerId;
     private String title;
-    private Date releaseDate;
+    private LocalDate releaseDate;
     private Integer version;
     private String singerFullName;
 
@@ -35,11 +36,11 @@ public class AlbumDto {
         this.title = title;
     }
 
-    public Date getReleaseDate() {
+    public LocalDate getReleaseDate() {
         return releaseDate;
     }
 
-    public void setReleaseDate(Date releaseDate) {
+    public void setReleaseDate(LocalDate releaseDate) {
         this.releaseDate = releaseDate;
     }
 
