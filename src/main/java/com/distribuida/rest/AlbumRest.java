@@ -14,6 +14,8 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.faulttolerance.Retry;
 import org.eclipse.microprofile.faulttolerance.Timeout;
+import org.eclipse.microprofile.metrics.annotation.Counted;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import java.util.List;
@@ -50,6 +52,7 @@ public class AlbumRest {
     @GET
     @Timeout(4000)
     @Retry(maxRetries = 4)
+    @Counted(name = "findAllAlbums", description = "How many times findAll method has been invoked", absolute = true)
     public List<AlbumDto> findAll(){
         return rep.findAll()
                 .stream()
@@ -60,6 +63,7 @@ public class AlbumRest {
     @Timeout(4000)
     @Retry(maxRetries = 4)
     @Path("/{id}")
+    @Counted(name = "findAlbumById", description = "How many times findAlbumById method has been invoked", absolute = true)
     public Response getById(@PathParam("id") Integer id) {
         var obj = rep.findById(id);
         if (obj == null) {
@@ -71,6 +75,7 @@ public class AlbumRest {
     @POST
     @Timeout(4000)
     @Retry(maxRetries = 4)
+    @Timed(name = "createAlbums", description = "A measure of how long it takes to create an album", absolute = true)
     public Response create(Album album) {
         if(clientSingers.getById(album.getSingerId())==null){
             return Response.status(Response.Status.NOT_FOUND).entity("Cantante no encontrado").build();
@@ -85,6 +90,7 @@ public class AlbumRest {
     @Timeout(4000)
     @Retry(maxRetries = 4)
     @Path("/{id}")
+    @Timed(name = "updateAlbums", description = "A measure of how long it takes to update an album", absolute = true)
     public Response update(@PathParam("id") Integer id, Album tmpAlbum) {
         if(clientSingers.getById(tmpAlbum.getSingerId())==null){
             return Response.status(Response.Status.NOT_FOUND).entity("Cantante no encontrado").build();
@@ -101,6 +107,7 @@ public class AlbumRest {
     @Timeout(4000)
     @Retry(maxRetries = 4)
     @Path("/{id}")
+    @Timed(name = "deleteAlbums", description = "A measure of how long it takes to delete an album", absolute = true)
     public Response delete(@PathParam("id") Integer id) {
         rep.delete(id);
         return Response.ok( ).entity("Album eliminado exitosamente")
